@@ -1,0 +1,26 @@
+<style>
+    body {
+        background-color: rgb(111, 0, 148);
+    }
+    div {
+        margin-top: 100px;
+        margin-left: 200px;
+    }
+    input {
+        display: block;
+        margin-bottom: 10px;
+
+    }
+</style>
+
+
+<div>
+    <h1>Login page</h1>
+    <form method="POST" action="{{ url_for('login') }}">
+        <input type="text" placeholder="login kiriting..." name="login">
+        <input type="text" placeholder="parol kiriting..." name="password">
+        <button type="submit"> Kirish </button>
+    </form>
+    <a href="{{ url_for('register') }}"> Royxatdan o'tish </a>
+
+</div>

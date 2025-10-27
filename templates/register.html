@@ -1,0 +1,27 @@
+<style>
+    body {
+        background-color: rgb(32, 217, 155);
+    }
+    div {
+        margin-top: 100px;
+        margin-left: 200px;
+    }
+    input {
+        display: block;
+        margin-bottom: 10px;
+
+    }
+</style>
+
+
+<div>
+    <h1>Register page</h1>
+    <form method="POST" action="{{ url_for('register') }}">
+        <input type="text" placeholder="ism kiriting..." name="ism">
+        <input type="text" placeholder="login kiriting..." name="login">
+        <input type="text" placeholder="parol kiriting..." name="password">
+        <button type="submit"> Ro'yxatdan o'tish </button>
+    </form>
+    <a href="{{ url_for('login') }}"> Loginga o'tish </a>
+
+</div>

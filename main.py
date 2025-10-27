@@ -1,12 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, \
+    request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
-app.secret_key = "oop"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
+app.secret_key = "test"
 
 db = SQLAlchemy(app)
+
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -28,21 +30,55 @@ class Todos(db.Model):
     def __repr__(self):
         return f"Task: {self.task} | User: {self.user_id}"
 
+
 @app.route("/")
 def index():
-    return render_template("index.html")
+    name = session.get("name")
+    if not name:
+        return redirect(url_for("login"))
+    return render_template("index.html", ism=name)
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("login.html")
+    if request.method == "GET":
+        return render_template("login.html")
+    else:
+        login = request.form.get("login")
+        password = request.form.get("password")
+        user = Users.query.filter_by(login=login, password=password).first()
+        if user:
+            session['name'] = user.name
+            session['user_id'] = user.id
+            return redirect(url_for('index'))
+        return redirect(url_for("login"))
 
-@app.route("/register")
+
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template("register.html")
+    if request.method == "GET":
+        return render_template("register.html")
+    else:
+        ism = request.form.get("ism")
+        login = request.form.get("login")
+        password = request.form.get("password")
+        if not ism and not login and not password:
+            return redirect(url_for("register"))
+        try:
+            user = Users(name=ism, login=login, password=password)
+            db.session.add(user)
+            db.session.commit()
+            session['name'] = user.name
+            session['user_id'] = user.id
+            return redirect(url_for('index'))
+        except:
+            print("xato")
+            return redirect(url_for("register"))
 
 @app.route("/logout")
 def logout():
+    session.clear()
     return redirect(url_for("login"))
+
 
 if __name__ == "__main__":
     with app.app_context():
